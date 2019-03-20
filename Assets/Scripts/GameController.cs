@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI; //añadido para llamar a Text, dentro de Canvas (UI), porque GUItext está obsoleto
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
@@ -13,8 +14,8 @@ public class GameController : MonoBehaviour {
     public float waveWait;
 
     public Text scoreText;
-    public Text restartText;
-    public Text gameOverText;
+    //public Text restartText;
+    public GameObject gameOverText;
     public Text waveText;
     private int waveCount = 1;
 
@@ -23,13 +24,14 @@ public class GameController : MonoBehaviour {
     private int score;
 
     public GameObject restartButton;
+    public Text maxScoreText;
 
     // Use this for initialization
     void Start () {
         gameOver = false;
         restart = false;
-        restartText.text = "";  //al principio, no queremos que aparezca nada escrito
-        gameOverText.text = "";
+        //restartText.text = "";  //al principio, no queremos que aparezca nada escrito
+        gameOverText.SetActive(false);
         score = 0;
         UpdateScore();
         restartButton.SetActive(false);
@@ -94,8 +96,26 @@ public class GameController : MonoBehaviour {
 
     public void GameOver()
     {
-        gameOverText.text = "Game Over!";
+        gameOverText.SetActive(true);
+        if ( score > PlayerPrefs.GetInt("maxScore", 0)) {
+            PlayerPrefs.SetInt("maxScore", score);
+            PlayerPrefs.Save();
+            maxScoreText.text = "Max Score: " + score;
+        } else
+        {
+            maxScoreText.text = "Max Score: " + PlayerPrefs.GetInt("maxScore", 0);
+        }
         gameOver = true;
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene("Main");
+    }
+
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }
 //https://unity3d.com/es/learn/tutorials/projects/space-shooter-tutorial/game-controller?playlist=17147

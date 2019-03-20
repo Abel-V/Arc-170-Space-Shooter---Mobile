@@ -32,11 +32,14 @@ public class PlayerController : MonoBehaviour {     // : MonoBehaviour indica qu
     public SimpleTouchPad touchPad;
     public SimpleTouchAreaButton areaButton;
 
+    public Joystick joystick;
+
+    /*
     private void Start()
     {
         CalibrateAccelerometer();
     }
-
+    */
 
     //parte de los disparos
     void Update()   //Unity ejecuta esta función justo antes de actualizar cada frame
@@ -44,34 +47,7 @@ public class PlayerController : MonoBehaviour {     // : MonoBehaviour indica qu
         Disparar();
         
     }
-
-    void FixedUpdate()
-    {
-        /*      //PARA .EXE
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
-        */
-
-        Rigidbody rb = GetComponent<Rigidbody>();
-        /*
-        Vector3 accelerationRaw = Input.acceleration; //acelerómetro del móvil
-        Vector3 acceleration = FixAcceleration(accelerationRaw);
-        //Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
-        */
-        Vector2 direction = touchPad.GetDirection();
-        Vector3 movement = new Vector3(direction.x, 0.0f, direction.y);
-        rb.velocity = movement * speed; //aquí también podría usarse la multiplicación por Time.deltaTime para smoothear
-
-        rb.position = new Vector3
-        (
-            Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax), 
-            0.0f,
-            Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
-        );
-
-        rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
-    }
-
+    /*
     //calibración del acelerómetro
     void CalibrateAccelerometer()
     {
@@ -86,7 +62,40 @@ public class PlayerController : MonoBehaviour {     // : MonoBehaviour indica qu
         Vector3 fixedAcceleration = calibrationQuaternion * acceleration;
         return fixedAcceleration;
     }
+    */
+    void FixedUpdate()
+    {
+        /*      //PARA .EXE
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+        */
 
+        Rigidbody rb = GetComponent<Rigidbody>();
+        /*
+        Vector3 accelerationRaw = Input.acceleration; //acelerómetro del móvil
+        Vector3 acceleration = FixAcceleration(accelerationRaw);
+        //Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+        */
+
+        //PARA USAR CON SIMPLE TOUCH AREA (NO ME VA):
+        //Vector2 direction = touchPad.GetDirection();
+
+        //PARA USR CON VARIABLE JOYSTICK:
+        Vector2 direction = joystick.Direction;
+
+        Vector3 movement = new Vector3(direction.x, 0.0f, direction.y);
+        rb.velocity = movement * speed; //aquí también podría usarse la multiplicación por Time.deltaTime para smoothear
+
+        rb.position = new Vector3
+        (
+            Mathf.Clamp(rb.position.x, boundary.xMin, boundary.xMax), 
+            0.0f,
+            Mathf.Clamp(rb.position.z, boundary.zMin, boundary.zMax)
+        );
+
+        rb.rotation = Quaternion.Euler(0.0f, 0.0f, rb.velocity.x * -tilt);
+    }
+    
     private void Disparar()
     {
         AudioSource audioSource = GetComponent<AudioSource>();

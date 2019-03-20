@@ -37,14 +37,14 @@ public class DestroyByContact : MonoBehaviour {
             Instantiate(explosion, transform.position, transform.rotation);
         }
 
+        gameController.AddScore(scoreValue);
+
         if (other.CompareTag("Player"))
         {
             Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
 
             gameController.GameOver();  //https://unity3d.com/es/learn/tutorials/projects/space-shooter-tutorial/ending-game?playlist=17147
         }
-
-        gameController.AddScore(scoreValue);
 
         Destroy(other.gameObject);  //destruye el gameObject de other, que es el disparo laser
         Destroy(gameObject);    //Destruye el gameObject, que es el objeto de este script, o sea, el asteroide
